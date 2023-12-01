@@ -20,3 +20,5 @@ public sealed class DataContext : IdentityDbContext<User, Role, int>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).GetTypeInfo().Assembly);
     }
 }
+
+

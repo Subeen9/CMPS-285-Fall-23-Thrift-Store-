@@ -34,7 +34,8 @@ public class UsersController : ControllerBase
                 Id = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-                UserName = x.UserName
+                UserName = x.UserName,
+                Email= x.Email
             })
             .ToList();
 
@@ -61,6 +62,7 @@ public class UsersController : ControllerBase
             FirstName = user.FirstName,
             LastName = user.LastName,
             UserName = user.UserName,
+            Email = user.Email
         };
 
         response.Data = userGetDto;
@@ -88,12 +90,14 @@ public class UsersController : ControllerBase
         {
             response.AddError("userName", "User name cannot be empty.");
         }
-
+        if (string.IsNullOrEmpty(userCreateDto.Email))
+        {
+            response.AddError("email", "Email cannot be empty.");
+        }
         if (string.IsNullOrEmpty(userCreateDto.Password))
         {
             response.AddError("password", "Password cannot be empty.");
         }
-
         if (response.HasErrors)
         {
             return BadRequest(response);
@@ -104,33 +108,29 @@ public class UsersController : ControllerBase
             FirstName = userCreateDto.FirstName,
             LastName = userCreateDto.LastName,
             UserName = userCreateDto.UserName,
+            Email = userCreateDto.Email,
         };
+        var userCreated = await _userManager.CreateAsync(userToCreate, userCreateDto.Password);
+        // _userManager.AddToRoleAsync(userToCreate, "Admin");
 
-        var createdUser= await _userManager.CreateAsync(userToCreate, userCreateDto.Password);
-        if (createdUser.Succeeded)
-        {    
-                var userGetDto = new UserGetDto
-                {
-                    Id = userToCreate.Id,
-                    FirstName = userToCreate.FirstName,
-                    LastName = userToCreate.LastName,
-                    UserName = userToCreate.UserName
-                };
+        if (userCreated.Succeeded)
+        {
+            var userGetDto = new UserGetDto
+            {
+                Id = userToCreate.Id,
+                FirstName = userToCreate.FirstName,
+                LastName = userToCreate.LastName,
+                UserName = userToCreate.UserName,
+                Email = userToCreate.Email,
+            };
 
             response.Data = userGetDto;
-           // await _userManager.AddToRoleAsync(userToCreate, "User");
             _context.SaveChanges();
-
             return Created("", response);
         }
         else
         {
-            foreach (var error in createdUser.Errors)
-            {
-                response.AddError(error.Code, error.Description);
-            }
-
-            return BadRequest(response);
+            return BadRequest("Unable to create user.");
         }
     }
 
@@ -170,6 +170,12 @@ public class UsersController : ControllerBase
             response.AddError("userName", "User name cannot be empty.");
         }
 
+        if (string.IsNullOrEmpty(userUpdateDto.Email))
+        {
+            response.AddError("email", "Email cannot be empty.");
+
+        }
+
         if (string.IsNullOrEmpty(userUpdateDto.Password))
         {
             response.AddError("password", "Password cannot be empty.");
@@ -183,6 +189,7 @@ public class UsersController : ControllerBase
         userToEdit.FirstName = userUpdateDto.FirstName;
         userToEdit.LastName = userUpdateDto.LastName;
         userToEdit.UserName = userUpdateDto.UserName;
+        userToEdit.Email = userUpdateDto.Email;
 
         _context.SaveChanges();
 
@@ -192,6 +199,7 @@ public class UsersController : ControllerBase
             FirstName = userToEdit.FirstName,
             LastName = userToEdit.LastName,
             UserName = userToEdit.UserName,
+            Email = userToEdit.Email
         };
 
         response.Data = userGetDto;

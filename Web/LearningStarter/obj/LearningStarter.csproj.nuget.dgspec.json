@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\subin\\CMPS285\\Web\\LearningStarter\\LearningStarter.csproj": {}
+    "C:\\Users\\subin\\CMPS285-F23-S02-G2\\Web\\LearningStarter\\LearningStarter.csproj": {}
   },
   "projects": {
-    "C:\\Users\\subin\\CMPS285\\Web\\LearningStarter\\LearningStarter.csproj": {
+    "C:\\Users\\subin\\CMPS285-F23-S02-G2\\Web\\LearningStarter\\LearningStarter.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\subin\\CMPS285\\Web\\LearningStarter\\LearningStarter.csproj",
+        "projectUniqueName": "C:\\Users\\subin\\CMPS285-F23-S02-G2\\Web\\LearningStarter\\LearningStarter.csproj",
         "projectName": "LearningStarter",
-        "projectPath": "C:\\Users\\subin\\CMPS285\\Web\\LearningStarter\\LearningStarter.csproj",
+        "projectPath": "C:\\Users\\subin\\CMPS285-F23-S02-G2\\Web\\LearningStarter\\LearningStarter.csproj",
         "packagesPath": "C:\\Users\\subin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\subin\\CMPS285\\Web\\LearningStarter\\obj\\",
+        "outputPath": "C:\\Users\\subin\\CMPS285-F23-S02-G2\\Web\\LearningStarter\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\subin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -69,6 +69,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[6.0.9, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[43.2.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

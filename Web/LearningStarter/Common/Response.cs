@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LearningStarter.Common;
 
@@ -11,5 +12,10 @@ public class Response
     public void AddError(string property, string message)
     {
         Errors.Add(new Error(property, message));
+    }
+
+    internal void AddError(string v)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { routes } from "../../routes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { IconSearch, IconShoppingBag } from "@tabler/icons-react";
 import {
   Header,
   Menu,
   Image,
+  Input,
   createStyles,
   Container,
   Group,
@@ -14,15 +16,24 @@ import {
   Flex,
   Text,
   Avatar,
+  Badge,
 } from "@mantine/core";
 import {
   NAVBAR_HEIGHT,
   NAVBAR_HEIGHT_NUMBER,
 } from "../../constants/theme-constants";
-import { NavLink, NavLinkProps, useLocation } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  NavLinkProps,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { UserDto } from "../../constants/types";
 import { useAuth } from "../../authentication/use-auth";
+import { useSearch } from "../../context/search-context";
+import { useCart } from "../../context/cart-context";
 
 type PrimaryNavigationProps = {
   user?: UserDto;
@@ -59,10 +70,24 @@ const navigation: NavigationItem[] = [
     },
   },
   {
-    text: "User",
+    text: "About",
     hide: false,
     nav: {
-      to: routes.user,
+      to: routes.aboutus,
+    },
+  },
+  {
+    text: "Add Products",
+    hide: false,
+    nav: {
+      to: routes.product,
+    },
+  },
+  {
+    text: "Shop",
+    hide: false,
+    nav: {
+      to: routes.shop,
     },
   },
 ];
@@ -122,6 +147,7 @@ const DesktopNavigation = () => {
               return (
                 <Button
                   size="md"
+                  style={{ color: "black" }}
                   component={NavLink}
                   to={x.nav.to}
                   className={cx(classes.paddedMenuItem, {
@@ -146,20 +172,26 @@ export const PrimaryNavigation: React.FC<PrimaryNavigationProps> = ({
   const { classes } = useStyles();
   const { logout } = useAuth();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  const cartContext = useCart();
+  const { cart } = cartContext || {};
   const dark = colorScheme === "dark";
+  const { setSearchQuery } = useSearch();
+  const navigate = useNavigate();
+
   return (
     <Header height={NAVBAR_HEIGHT_NUMBER}>
-      <Container px={20} fluid>
+      <Container px={20} fluid className={classes.navContainer}>
         <Flex direction="row" justify="space-between" align="center">
           <Group>
             <Flex direction="row" align="center">
               <NavLink to={routes.root}>
                 <Image
-                  className={classes.logo}
-                  width={60}
-                  height={50}
-                  radius="sm"
+                  width={100}
+                  height={75}
+                  radius="md"
                   withPlaceholder
+                  fit="contain"
                   src={logo}
                   alt="logo"
                 />
@@ -167,9 +199,49 @@ export const PrimaryNavigation: React.FC<PrimaryNavigationProps> = ({
               {user && <DesktopNavigation />}
             </Flex>
           </Group>
+          {user && (
+            <Group>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                gap="sm"
+                align="center"
+              >
+                <Input
+                  icon={<IconSearch />}
+                  placeholder="Search"
+                  radius="sm"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </Flex>
+            </Group>
+          )}
           <Group>
             {user && (
               <Menu>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginRight: "10px",
+                    marginTop: "15px",
+                  }}
+                >
+                  <Link to="/cart">
+                    <Badge
+                      style={{
+                        position: "absolute",
+                        top: "-9px",
+                        right: "-10px",
+                      }}
+                      color="#CBC3E3"
+                      size="xs"
+                    >
+                      <span>{cart?.length}</span>
+                    </Badge>
+                    <IconShoppingBag color="black" size={32} />
+                  </Link>
+                </div>
+
                 <Menu.Target>
                   <Avatar className={classes.pointer}>
                     {user.firstName.substring(0, 1)}
@@ -179,6 +251,9 @@ export const PrimaryNavigation: React.FC<PrimaryNavigationProps> = ({
                 <Menu.Dropdown>
                   <Menu.Item onClick={() => toggleColorScheme()}>
                     {dark ? "Light mode" : "Dark mode"}
+                  </Menu.Item>
+                  <Menu.Item onClick={() => navigate(routes.user)}>
+                    Profile
                   </Menu.Item>
                   <Menu.Item onClick={() => logout()}>Sign Out</Menu.Item>
                 </Menu.Dropdown>
@@ -196,29 +271,27 @@ const useStyles = createStyles((theme) => {
     pointer: {
       cursor: "pointer",
     },
-    logo: {
-      cursor: "pointer",
-      marginRight: "5px",
-      paddingTop: "5px",
-      height: NAVBAR_HEIGHT,
-    },
     paddedMenuItem: {
       margin: "0px 5px 0px 5px",
+      "&:hover": {
+        backgroundColor: "#458588",
+        color: "black",
+      },
     },
     linkActive: {
-      "&, &:hover": {
-        backgroundColor: theme.fn.variant({
-          variant: "light",
-          color: theme.primaryColor,
-        }).background,
-        color: theme.fn.variant({
-          variant: "light",
-          color: theme.primaryColor,
-        }).color,
+      borderBottom: "1px solid #458588",
+      textDecorationColor: "#458588",
+      //color: "white",
+      "&:hover": {
+        backgroundColor: "#458588",
+        color: "black",
       },
     },
     desktopNav: {
       height: NAVBAR_HEIGHT,
+    },
+    navContainer: {
+      backgroundColor: "#a89984",
     },
     fullHeight: {
       height: "100%",

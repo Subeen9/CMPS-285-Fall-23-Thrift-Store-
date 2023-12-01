@@ -10,19 +10,21 @@ public class Reviews
     public int ProductId { get; set; }
     public double Ratings { get; set; }
     public string Comments { get; set; }
+    public User User { get; set; }
     public Product Product { get; set; }
 }
 public class ReviewsGetDto
 {
     public int Id { get; set; }
     public int UserId { get; set; }
+    public string UserName { get; set; }
     public int ProductId { get; set; }
     public double Ratings { get; set; }
     public string Comments { get; set; }
 }
 public class ReviewsCreateDto
 {
-    public int Id { get; set; }
+    //public int Id { get; set; }
     public int UserId { get; set; }
     public int ProductId { get; set; }
     public double Ratings { get; set; }
@@ -30,7 +32,7 @@ public class ReviewsCreateDto
 }
 public class ReviewsUpdateDto
 {
-    public int Id { get; set; }
+   // public int Id { get; set; }
     public int UserId { get; set; }
     public int ProductId { get; set; }
     public double Ratings { get; set; }

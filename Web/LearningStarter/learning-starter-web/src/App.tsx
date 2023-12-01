@@ -8,8 +8,10 @@ import {
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { NotificationsProvider } from "@mantine/notifications";
+import { SearchProvider } from "./context/search-context";
+import { CartProvider } from "./context/cart-context";
 
-//This is almost the base level of your app.  You can also put global things here.
+
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "color-scheme",
@@ -30,9 +32,17 @@ function App() {
         withNormalizeCSS
       >
         <NotificationsProvider position="top-right" autoClose={3000} limit={5}>
-          <Container fluid px={0} className="App">
+          <Container
+            fluid
+            px={0}
+            className="App"
+          >
             <AuthProvider>
-              <Routes />
+              <SearchProvider>
+                <CartProvider>
+                  <Routes />
+                </CartProvider>
+              </SearchProvider>
             </AuthProvider>
           </Container>
         </NotificationsProvider>

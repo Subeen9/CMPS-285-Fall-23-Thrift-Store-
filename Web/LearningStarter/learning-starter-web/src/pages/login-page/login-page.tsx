@@ -1,17 +1,21 @@
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { ApiResponse } from "../../constants/types";
 import { useAsyncFn } from "react-use";
-import { PageWrapper } from "../../components/page-wrapper/page-wrapper";
+import { routes } from "../../routes";
 import { FormErrors, useForm } from "@mantine/form";
 import {
   Alert,
   Button,
   Container,
   createStyles,
+  Image,
   Input,
   Text,
 } from "@mantine/core";
 import api from "../../config/axios";
 import { showNotification } from "@mantine/notifications";
+import Logo from "../../assets/logo.png";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -22,9 +26,6 @@ type LoginRequest = {
 
 type LoginResponse = ApiResponse<boolean>;
 
-//This is a *fairly* basic form
-//The css used in here is a good example of how flexbox works in css
-//For more info on flexbox: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 export const LoginPage = ({
   fetchCurrentUser,
 }: {
@@ -63,62 +64,161 @@ export const LoginPage = ({
     }
 
     if (response.data.data) {
-      showNotification({ message: "Successfully Logged In!", color: "green" });
+      showNotification({
+        message: "Successfully Logged In!",
+        color: "green",
+        style: { marginTop: "70px" },
+      });
       fetchCurrentUser();
     }
   }, []);
 
-  return (
-    <PageWrapper>
-      <Container>
-        <Container px={0}>
-          {form.errors[""] && (
-            <Alert className={classes.generalErrors} color="red">
-              <Text>{form.errors[""]}</Text>
-            </Alert>
-          )}
-          <form onSubmit={form.onSubmit(submitLogin)}>
-            <Container px={0}>
-              <Container className={classes.formField} px={0}>
-                <Container px={0}>
-                  <label htmlFor="userName">Username</label>
-                </Container>
-                <Input {...form.getInputProps("userName")} />
-                <Text c="red">{form.errors["userName"]}</Text>
-              </Container>
-              <Container className={classes.formField} px={0}>
-                <Container px={0}>
-                  <label htmlFor="password">Password</label>
-                </Container>
-                <Input type="password" {...form.getInputProps("password")} />
-                <Text c="red">{form.errors["password"]}</Text>
-              </Container>
+  const [loginMouseDown, setLoginMouseDown] = useState(false);
+  const [loginHover, setLoginHover] = useState(false);
+  const [registerMouseDown, setRegisterMouseDown] = useState(false);
+  const [registerHover, setRegisterHover] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-              <Container px={0}>
-                <Button className={classes.loginButton} type="submit">
-                  Login
-                </Button>
-              </Container>
-            </Container>
-          </form>
-        </Container>
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prevPasswordVisible) => !prevPasswordVisible);
+  };
+
+  return (
+    <Container className={classes.loginBox}>
+      <Container className={classes.appLogo}>
+        <Image src={Logo} alt="Logo" />
       </Container>
-    </PageWrapper>
+
+      <Container className={classes.loginHeader}> Login</Container>
+
+      {form.errors[""] && (
+        <Alert className={classes.generalErrors} color="red">
+          <Text>{form.errors[""]}</Text>
+        </Alert>
+      )}
+
+      <form onSubmit={form.onSubmit(submitLogin)}>
+        <Container className={classes.formField}>
+          <label htmlFor="userName" />
+          <Input
+            {...form.getInputProps("userName")}
+            placeholder="Username"
+            styles={{
+              input: { width: "100%", height: "40px" },
+            }}
+          />
+          <Text color="red">{form.errors["userName"]}</Text>
+        </Container>
+
+        <Container className={classes.formField}>
+          <label htmlFor="password" />
+          <Input
+            type={passwordVisible ? "text" : "password"}
+            {...form.getInputProps("password")}
+            placeholder="Password"
+            styles={{
+              input: { width: "100%", height: "40px" },
+            }}
+          />
+        </Container>
+        <Text color="red">{form.errors["password"]}</Text>
+
+        <Container className={classes.checkboxContainer}>
+          <input type="checkbox" onChange={togglePasswordVisibility} />
+
+          <Text style={{ marginLeft: "0.5rem" }}> Show Password</Text>
+        </Container>
+
+        <Container className={classes.buttonContainer}>
+          <Button
+            type="submit"
+            onMouseEnter={() => setLoginHover(true)}
+            onMouseLeave={() => setLoginHover(false)}
+            onMouseDown={() => setLoginMouseDown(true)}
+            onMouseUp={() => setLoginMouseDown(false)}
+            style={{
+              backgroundColor: loginHover
+                ? "#ffff"
+                : loginMouseDown
+                ? "#458588"
+                : "#458588",
+              color: "black",
+            }}
+          >
+            Login
+          </Button>
+
+          <Button
+            component={NavLink}
+            to={routes.register}
+            type="submit"
+            onMouseEnter={() => setRegisterHover(true)}
+            onMouseLeave={() => setRegisterHover(false)}
+            onMouseDown={() => setRegisterMouseDown(true)}
+            onMouseUp={() => setRegisterMouseDown(false)}
+            style={{
+              backgroundColor: registerHover
+                ? "#ffff"
+                : registerMouseDown
+                ? "#458588"
+                : "#458588",
+              color: "black",
+            }}
+          >
+            Sign Up
+          </Button>
+        </Container>
+      </form>
+    </Container>
   );
 };
 
 const useStyles = createStyles(() => {
   return {
+    loginBox: {
+      marginTop: "5rem",
+      maxWidth: "400px",
+      paddingBottom: "20px",
+      borderRadius: "10px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+      textAlign: "center",
+      background: "#a89984",
+    },
+    appLogo: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "250px",
+      height: "180px",
+      objectFit: "cover",
+      marginBottom: "20px",
+    },
+    loginHeader: {
+      fontSize: "24px",
+      marginBottom: "20px",
+      fontFamily: "sans-serif",
+    },
     generalErrors: {
       marginBottom: "8px",
     },
-
-    loginButton: {
-      marginTop: "8px",
+    formField: {
+      padding: "10px",
+      width: "70%",
     },
 
-    formField: {
-      marginBottom: "8px",
+    buttonContainer: {
+      display: "flex",
+      justifyContent: "space-around", // spaces two elements from each other, in our case our buttons
+      alignItems: "center",
+      marginTop: "20px",
+      marginBottom: "20px",
+    },
+    checkboxContainer: {
+      display: "flex",
+      alignItems: "Center", // Center vertically
+      marginTop: "5px", // Space from the top element
+      cursor: "pointer",
+      marginLeft: "5rem",
     },
   };
 });

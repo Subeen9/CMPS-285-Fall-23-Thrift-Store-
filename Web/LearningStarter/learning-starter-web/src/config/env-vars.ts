@@ -40,3 +40,4 @@ export const EnvVars: Env = {
   sentryKey: process.env.REACT_APP_SENTRY_PUBLIC_KEY,
   sentryProjectId: process.env.REACT_APP_SENTRY_PUBLIC_PROJECT_ID,
 };
+

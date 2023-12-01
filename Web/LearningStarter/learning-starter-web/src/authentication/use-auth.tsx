@@ -1,12 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAsyncRetry, useAsyncFn } from "react-use";
 import { ApiResponse } from "../constants/types";
 import { ApiError } from "../constants/types";
 import { LoginPage } from "../pages/login-page/login-page";
+import { RegisterPage } from "../pages/register-page/register-page";
 import { UserDto } from "../constants/types";
 import { StatusCodes } from "../constants/status-codes";
 import { Loader } from "@mantine/core";
 import api from "../config/axios";
+import { routes } from "../routes";
+import { useLocation } from "react-router-dom";
 
 const currentUser = "currentUser";
 
@@ -38,6 +41,12 @@ export const AuthContext = createContext<AuthState>(INITIAL_STATE);
 export const AuthProvider = (props: any) => {
   const [errors, setErrors] = useState<ApiError[]>(INITIAL_STATE.errors);
   const [user, setUser] = useState<UserDto | null>(INITIAL_STATE.user);
+  const [isRegisterPage, setRegisterPage] = useState<boolean>(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setRegisterPage(location.pathname.startsWith(routes.register));
+  }, [location.pathname]);
 
   //This is the main function for getting the user information from the database.
   //This function gets called on every "notify("user-login") in order to refetch the user data."
@@ -83,6 +92,17 @@ export const AuthProvider = (props: any) => {
     return response;
   }, []);
 
+  // Check if the current page is the register page
+  // const isRegisterPage = window.location.pathname.startsWith(routes.register);
+  console.log(window.location.pathname);
+  //If it's the register page, render the RegisterPage component
+  if (isRegisterPage) {
+    return (
+      <>
+        <RegisterPage />
+      </>
+    );
+  }
   //This returns a Loading screen if the API call takes a long time to get user info
   if (fetchCurrentUser.loading) {
     return <Loader />;
@@ -129,4 +149,5 @@ export const mapUser = (user: any): UserDto => ({
   firstName: user.firstName,
   lastName: user.lastName,
   userName: user.userName,
+  email: user.email,
 });
